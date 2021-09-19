@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <ContentTargetFolders>.</ContentTargetFolders>
+        <Product>Cultiv.Hangfire</Product>
+        <PackageId>Cultiv.Hangfire</PackageId>
+        <Title>Hangfire dashboard for Umbraco</Title>
+        <Description>This installs Hangfire and a dashboard in Umbraco, the dashboard is secured and is only available for users with access to the Settings section of Umbraco</Description>
+        <PackageTags>umbraco plugin package</PackageTags>
+        <RootNamespace>Cultiv.Hangfire</RootNamespace>
+		<Authors>Sebastiaan Janssen</Authors>
+		<PackageProjectUrl>https://github.com/nul800sebastiaan/Cultiv.Hangfire</PackageProjectUrl>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageIcon>logo.png</PackageIcon>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Hangfire" Version="1.7.25" />
+      <PackageReference Include="Hangfire.Console" Version="1.4.2" />
+      <PackageReference Include="Umbraco.Cms.Core" Version="9.0.0-rc003" />
+      <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.0.0-rc003" />
+      <PackageReference Include="Umbraco.Cms.Web.Common" Version="9.0.0-rc003" />
+    </ItemGroup>
+	
+    <ItemGroup>
+        <Content Include="App_Plugins\Cultiv.Hangfire\**\*.*">
+            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+        </Content>
+        <None Include="build\**\*.*">
+            <Pack>True</Pack>
+            <PackagePath>buildTransitive</PackagePath>
+        </None>
+    </ItemGroup>
+	<ItemGroup>
+		<None Include="../LICENSE" Pack="true" PackagePath="" />
+		<None Include="../logo.png" Pack="true" PackagePath="" />
+	</ItemGroup>
+</Project>

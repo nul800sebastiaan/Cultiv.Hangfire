@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/package.manifest",
+  "dashboards": [
+    {
+      "alias": "cultiv.Hangfire",
+      "view": "/App_Plugins/Cultiv.Hangfire/dashboard.html",
+      "sections": [
+        "settings"
+      ]
+    }
+  ]
+}
