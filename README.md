@@ -1,4 +1,4 @@
-# Cultiv.Hangfrie
+# Cultiv.Hangfire
 Hangfire dashboard for Umbraco
 
 This installs Hangfire and a dashboard in Umbraco, the dashboard is secured and is only available for users with access to the Settings section of Umbraco.
