@@ -36,3 +36,7 @@ namespace MyNamespace
     }
 }
 ```
+
+<!--metadata
+umb-version-range: [9.0.0,10.0.0)
+-->
