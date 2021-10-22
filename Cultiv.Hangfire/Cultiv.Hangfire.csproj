@@ -13,6 +13,7 @@
 		<PackageProjectUrl>https://github.com/nul800sebastiaan/Cultiv.Hangfire</PackageProjectUrl>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageIcon>logo.png</PackageIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -32,6 +33,7 @@
             <Pack>True</Pack>
             <PackagePath>buildTransitive</PackagePath>
         </None>
+		<None Include="..\README.md" Pack="true" PackagePath="\"/>
     </ItemGroup>
 	<ItemGroup>
 		<None Include="../LICENSE" Pack="true" PackagePath="" />
