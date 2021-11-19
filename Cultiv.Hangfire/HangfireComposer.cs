@@ -70,10 +70,22 @@ namespace Cultiv.Hangfire
                     {
                         endpoints.MapHangfireDashboard(
                                 pattern: "/umbraco/backoffice/hangfire",
-                                options: new DashboardOptions()).RequireAuthorization(Constants.System.HangfireDashboard);
+                                options: new DashboardOptions() { 
+                                    Authorization = new[] { new DummyAuthorizationFilter() }
+                                }).RequireAuthorization(Constants.System.HangfireDashboard);
                     }).UseHangfireDashboard()
                 });
             });
         }
     }
+    
+    
+    public class DummyAuthorizationFilter : IDashboardAuthorizationFilter
+    {
+        public bool Authorize(DashboardContext context) 
+        {
+            return true;
+        }
+    }
+    
 }
