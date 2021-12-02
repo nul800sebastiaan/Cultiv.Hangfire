@@ -67,11 +67,10 @@ namespace Cultiv.Hangfire
                 options.AddFilter(new UmbracoPipelineFilter(Constants.System.HangfireDashboard)
                 {
                     Endpoints = app => app.UseEndpoints(endpoints =>
-                    {
-                        endpoints.MapHangfireDashboard(
-                                pattern: "/umbraco/backoffice/hangfire",
-                                options: new DashboardOptions()).RequireAuthorization(Constants.System.HangfireDashboard);
-                    }).UseHangfireDashboard()
+                   {
+                       endpoints.MapHangfireDashboardWithAuthorizationPolicy(
+                           Constants.System.HangfireDashboard, Constants.System.Endpoint);
+                   }).UseHangfireDashboard(Constants.System.Endpoint)
                 });
             });
         }
