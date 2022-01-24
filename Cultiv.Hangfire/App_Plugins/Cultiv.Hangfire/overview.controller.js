@@ -30,7 +30,7 @@
                     {
                         "name": vm.page.labels.hangfire,
                         "icon": "icon-repeat",
-                        "view": Umbraco.Sys.ServerVariables.umbracoSettings.appPluginsPath + '/hangfire/backoffice/hangfire/views/dashboard.html',
+                        "view": Umbraco.Sys.ServerVariables.umbracoSettings.appPluginsPath + '/Cultiv.Hangfire/backoffice/hangfire/views/dashboard.html',
                         "active": true,
                         "alias": "hangfire",
                         "action": function () {
