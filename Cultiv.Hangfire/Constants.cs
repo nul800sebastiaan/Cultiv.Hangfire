@@ -4,6 +4,8 @@
     {
         public static class System
         {
+            public const string ProductName = "Hangfire";
+
             public const string HangfireDashboard = nameof(HangfireDashboard);
         }
 

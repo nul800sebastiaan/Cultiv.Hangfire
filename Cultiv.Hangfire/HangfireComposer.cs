@@ -1,5 +1,6 @@
 ﻿using System;
 using Cultiv.Hangfire.BackOffice.Sections;
+using Cultiv.Hangfire.Configuration;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.SqlServer;
@@ -17,6 +18,11 @@ namespace Cultiv.Hangfire
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            // Register configuration
+            var options = builder.Services.AddOptions<HangfireSettings>()
+                .Bind(builder.Config.GetSection(Constants.System.ProductName))
+                .ValidateDataAnnotations();
+
             // TODO: Can we add this based on config?
             builder.Sections().Append<HangfireSection>();
 
