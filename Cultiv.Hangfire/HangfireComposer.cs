@@ -1,4 +1,5 @@
 ﻿using System;
+using Cultiv.Hangfire.BackOffice.Sections;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.SqlServer;
@@ -16,6 +17,9 @@ namespace Cultiv.Hangfire
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            // TODO: Can we add this based on config?
+            builder.Sections().Append<HangfireSection>();
+
             // Configure Hangfire to use our current database and add the option to write console messages
             var connectionString = builder.Config.GetConnectionString(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
             if (string.IsNullOrEmpty(connectionString) == false)
@@ -69,9 +73,15 @@ namespace Cultiv.Hangfire
                     Endpoints = app => app.UseEndpoints(endpoints =>
                     {
                         endpoints.MapHangfireDashboard(
-                                pattern: "/umbraco/backoffice/hangfire",
-                                options: new DashboardOptions()).RequireAuthorization(Constants.System.HangfireDashboard);
-                    }).UseHangfireDashboard()
+                            pattern: "/umbraco/backoffice/hangfire",
+                            options: new DashboardOptions
+                            {
+                                AppPath = null // Hide "Back to site" link
+                            }
+                        )
+                        .RequireAuthorization(Constants.System.HangfireDashboard);
+                    })
+                    .UseHangfireDashboard()
                 });
             });
         }
