@@ -3,7 +3,6 @@ using Hangfire;
 using Hangfire.Console;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -16,36 +15,39 @@ namespace Cultiv.Hangfire
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            // Configure Hangfire to use our current database and add the option to write console messages
-            var connectionString = builder.Config.GetConnectionString(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
-            if (string.IsNullOrEmpty(connectionString) == false)
+            var connectionString = builder.Config.GetUmbracoConnectionString(out var providerName);
+            if (string.IsNullOrEmpty(connectionString) ||
+                providerName != Umbraco.Cms.Core.Constants.DatabaseProviders.SqlServer)
             {
-                builder.Services.AddHangfire(configuration =>
-                {
-                    configuration
-                        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-                        .UseSimpleAssemblyNameTypeSerializer()
-                        .UseRecommendedSerializerSettings()
-                        .UseConsole()
-                        .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
-                        {
-                            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                            QueuePollInterval = TimeSpan.Zero,
-                            UseRecommendedIsolationLevel = true,
-                            DisableGlobalLocks = true,
-                        });
-                });
-
-                // Run the required server so your queued jobs will get executed
-                builder.Services.AddHangfireServer();
-
-                AddAuthorizedUmbracoDashboard(builder);
-                
-                // For some reason we need to give it the connection string again, else we get this error:
-                // https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
-                JobStorage.Current = new SqlServerStorage(connectionString);
+                return;
             }
+            
+            // Configure Hangfire to use our current database and add the option to write console messages
+            builder.Services.AddHangfire(configuration =>
+            {
+                configuration
+                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseConsole()
+                    .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
+                    {
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        DisableGlobalLocks = true,
+                    });
+            });
+
+            // Run the required server so your queued jobs will get executed
+            builder.Services.AddHangfireServer();
+            
+            AddAuthorizedUmbracoDashboard(builder);
+
+            // For some reason we need to give it the connection string again, else we get this error:
+            // https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
+            JobStorage.Current = new SqlServerStorage(connectionString);
         }
 
         private static void AddAuthorizedUmbracoDashboard(IUmbracoBuilder builder)
@@ -58,9 +60,9 @@ namespace Cultiv.Hangfire
                     Endpoints = app => app.UseEndpoints(endpoints =>
                     {
                         endpoints.MapHangfireDashboardWithAuthorizationPolicy(
-                                pattern: "/umbraco/backoffice/hangfire",
-                                options: new DashboardOptions(),
-                                authorizationPolicyName: AuthorizationPolicies.SectionAccessSettings);
+                            pattern: Constants.System.Endpoint,
+                            options: new DashboardOptions(),
+                            authorizationPolicyName: AuthorizationPolicies.SectionAccessSettings);
                     }).UseHangfireDashboard()
                 });
             });
