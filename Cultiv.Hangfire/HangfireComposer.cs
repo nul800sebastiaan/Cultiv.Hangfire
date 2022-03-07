@@ -7,8 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Cms.Web.BackOffice.Authorization;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
+using Umbraco.Cms.Web.Common.Authorization;
 
 namespace Cultiv.Hangfire
 {
@@ -50,17 +50,6 @@ namespace Cultiv.Hangfire
 
         private static void AddAuthorizedUmbracoDashboard(IUmbracoBuilder builder)
         {
-            // Add a named policy to authorize requests to the dashboard
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy(Constants.System.HangfireDashboard, policy =>
-                {
-                    // We require a logged in backoffice user who has access to the settings section
-                    policy.AuthenticationSchemes.Add(Umbraco.Cms.Core.Constants.Security.BackOfficeAuthenticationType);
-                    policy.Requirements.Add(new SectionRequirement(Umbraco.Cms.Core.Constants.Applications.Settings));
-                });
-            });
-
             // Add the dashboard and make sure it's authorized with the named policy above
             builder.Services.Configure<UmbracoPipelineOptions>(options =>
             {
@@ -68,9 +57,10 @@ namespace Cultiv.Hangfire
                 {
                     Endpoints = app => app.UseEndpoints(endpoints =>
                     {
-                        endpoints.MapHangfireDashboard(
+                        endpoints.MapHangfireDashboardWithAuthorizationPolicy(
                                 pattern: "/umbraco/backoffice/hangfire",
-                                options: new DashboardOptions()).RequireAuthorization(Constants.System.HangfireDashboard);
+                                options: new DashboardOptions(),
+                                authorizationPolicyName: AuthorizationPolicies.SectionAccessSettings);
                     }).UseHangfireDashboard()
                 });
             });
