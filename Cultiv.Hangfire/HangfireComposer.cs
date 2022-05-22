@@ -8,6 +8,7 @@ using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Cms.Web.Common.Authorization;
+using Umbraco.Extensions;
 
 namespace Cultiv.Hangfire
 {
@@ -15,13 +16,13 @@ namespace Cultiv.Hangfire
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            var connectionString = builder.Config.GetUmbracoConnectionString(out var providerName);
-            if (string.IsNullOrEmpty(connectionString) ||
-                providerName != Umbraco.Cms.Core.Constants.DatabaseProviders.SqlServer)
+            var providerName = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
+            if (providerName != Umbraco.Cms.Persistence.SqlServer.Constants.ProviderName)
             {
                 return;
             }
             
+            var connectionString = builder.Config.GetUmbracoConnectionString();
             // Configure Hangfire to use our current database and add the option to write console messages
             builder.Services.AddHangfire(configuration =>
             {
