@@ -16,13 +16,7 @@ namespace Cultiv.Hangfire
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            var providerName = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
-            if (providerName != Umbraco.Cms.Persistence.SqlServer.Constants.ProviderName)
-            {
-                throw new NotSupportedException($"Cultiv.Hangfire only works on SQL Server and LocalDb, your current provider ({providerName}) is not supported.");
-            }
-            
-            var connectionString = builder.Config.GetUmbracoConnectionString();
+            var connectionString = GetConnectionString(builder);
             // Configure Hangfire to use our current database and add the option to write console messages
             builder.Services.AddHangfire(configuration =>
             {
@@ -67,6 +61,21 @@ namespace Cultiv.Hangfire
                     })
                 });
             });
+        }
+
+        private string GetConnectionString(IUmbracoBuilder builder)
+        {
+            var connectionString = builder.Config.GetUmbracoConnectionString("hangfireDB");
+            if (!string.IsNullOrWhiteSpace(connectionString))
+            {
+                return connectionString;
+            }
+            var providerName = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
+            if (providerName != Umbraco.Cms.Persistence.SqlServer.Constants.ProviderName)
+            {
+                throw new NotSupportedException($"Cultiv.Hangfire only works on SQL Server and LocalDb, your current provider ({providerName}) is not supported.");
+            }
+            return builder.Config.GetUmbracoConnectionString();
         }
     }
 }
