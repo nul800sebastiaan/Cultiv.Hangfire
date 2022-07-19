@@ -2,6 +2,7 @@
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.SqlServer;
+using J2N.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
@@ -70,6 +71,9 @@ namespace Cultiv.Hangfire
             });
         }
 
+        private static readonly List<string> AllowedSqlProviderNames = 
+            new() { Umbraco.Cms.Persistence.SqlServer.Constants.ProviderName, "System.Data.SqlClient" };
+        
         private static string GetConnectionString(IUmbracoBuilder builder)
         {
             var connectionString = builder.Config.GetUmbracoConnectionString(Constants.System.AlternativeConnectionStringName);
@@ -79,7 +83,7 @@ namespace Cultiv.Hangfire
             }
             
             var providerName = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
-			if (providerName != null && providerName != Umbraco.Cms.Persistence.SqlServer.Constants.ProviderName)
+			if (providerName != null && AllowedSqlProviderNames.InvariantContains(providerName))
 			{
 				throw new NotSupportedException($"Cultiv.Hangfire only works on SQL Server and LocalDb, your current provider ({providerName}) is not supported.");
 			}
