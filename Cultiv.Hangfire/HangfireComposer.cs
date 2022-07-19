@@ -83,7 +83,7 @@ namespace Cultiv.Hangfire
             }
             
             var providerName = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
-			if (providerName != null && AllowedSqlProviderNames.InvariantContains(providerName))
+			if (providerName != null && AllowedSqlProviderNames.InvariantContains(providerName) == false)
 			{
 				throw new NotSupportedException($"Cultiv.Hangfire only works on SQL Server and LocalDb, your current provider ({providerName}) is not supported.");
 			}
