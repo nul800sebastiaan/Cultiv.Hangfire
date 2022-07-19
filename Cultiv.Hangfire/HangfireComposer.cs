@@ -17,6 +17,12 @@ namespace Cultiv.Hangfire
         public void Compose(IUmbracoBuilder builder)
         {
             var connectionString = GetConnectionString(builder);
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                // This might happen when the package is installed before Umbraco is installed
+                // https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/11
+                return;
+            }
             
             // Configure Hangfire to use our current database and add the option to write console messages
             builder.Services.AddHangfire(configuration =>
