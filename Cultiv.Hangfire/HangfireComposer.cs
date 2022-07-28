@@ -27,7 +27,7 @@ namespace Cultiv.Hangfire
                 // https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/11
                 return;
             }
-            
+
             // Configure Hangfire to use our current database and add the option to write console messages
             builder.Services.AddHangfire(configuration =>
             {
@@ -48,7 +48,7 @@ namespace Cultiv.Hangfire
 
             // Run the required server so your queued jobs will get executed
             builder.Services.AddHangfireServer();
-            
+
             AddAuthorizedUmbracoDashboard(builder);
 
             // For some reason we need to give it the connection string again, else we get this error:
@@ -74,23 +74,26 @@ namespace Cultiv.Hangfire
             });
         }
 
-        private static readonly List<string> AllowedSqlProviderNames = 
+        private static readonly List<string> AllowedSqlProviderNames =
             new() { Umbraco.Cms.Persistence.SqlServer.Constants.ProviderName, "System.Data.SqlClient" };
-        
+
         private static string GetConnectionString(IUmbracoBuilder builder)
         {
-            var connectionString = builder.Config.GetUmbracoConnectionString(Constants.System.AlternativeConnectionStringName);
+            var connectionString =
+                builder.Config.GetUmbracoConnectionString(Constants.System.AlternativeConnectionStringName);
             if (string.IsNullOrWhiteSpace(connectionString) == false)
             {
                 return connectionString;
             }
-            
-            var providerName = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
-			if (providerName != null && AllowedSqlProviderNames.InvariantContains(providerName) == false)
-			{
-				throw new NotSupportedException($"Cultiv.Hangfire only works on providers `{string.Join("`, `", AllowedSqlProviderNames)}`, your current provider ({providerName}) is not supported.");
-			}
-            
+
+            var providerName =
+                builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
+            if (providerName != null && AllowedSqlProviderNames.InvariantContains(providerName) == false)
+            {
+                throw new NotSupportedException(
+                    $"Cultiv.Hangfire only works on providers `{string.Join("`, `", AllowedSqlProviderNames)}`, your current provider ({providerName}) is not supported.");
+            }
+
             return builder.Config.GetUmbracoConnectionString();
         }
     }
