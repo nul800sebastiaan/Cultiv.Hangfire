@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.SqlServer;
-using J2N.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Manifest;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Cms.Web.Common.Authorization;
 using Umbraco.Extensions;
@@ -17,6 +18,8 @@ namespace Cultiv.Hangfire
     {
         public void Compose(IUmbracoBuilder builder)
         {
+            builder.ManifestFilters().Append<CultivHangfireManifestFilter>();
+
             var connectionString = GetConnectionString(builder);
             if (string.IsNullOrEmpty(connectionString))
             {
@@ -89,6 +92,26 @@ namespace Cultiv.Hangfire
 			}
             
             return builder.Config.GetUmbracoConnectionString();
+        }
+    }
+
+    internal class CultivHangfireManifestFilter : IManifestFilter
+    {
+        public void Filter(List<PackageManifest> manifests)
+        {
+            manifests.Add(new PackageManifest
+            {
+                PackageName = "Cultiv.Hangfire",
+                Dashboards = new[]
+                {
+                    new ManifestDashboard
+                    {
+                        Alias = "cultiv.Hangfire",
+                        Sections = new[] { Umbraco.Cms.Core.Constants.Applications.Settings },
+                        View = "/App_Plugins/Cultiv.Hangfire/dashboard.html"
+                    }
+                }
+            });
         }
     }
 }
