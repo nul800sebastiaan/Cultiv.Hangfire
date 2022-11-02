@@ -25,6 +25,10 @@ public class HangfireComposer : IComposer
             return;
         }
 
+        // Explicitly use the SqlConnection in the Microsoft.Data namespace to support extended connection string parameters such as "authentication"
+        // https://github.com/HangfireIO/Hangfire/issues/1827
+        var dbConnFunc = () => new Microsoft.Data.SqlClient.SqlConnection(connectionString);
+
         // Configure Hangfire to use our current database and add the option to write console messages
         builder.Services.AddHangfire(configuration =>
         {
@@ -33,7 +37,7 @@ public class HangfireComposer : IComposer
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
                 .UseConsole()
-                .UseSqlServerStorage(connectionString, new SqlServerStorageOptions
+                .UseSqlServerStorage(dbConnFunc, new SqlServerStorageOptions
                 {
                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
                     SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
@@ -50,7 +54,7 @@ public class HangfireComposer : IComposer
 
         // For some reason we need to give it the connection string again, else we get this error:
         // https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
-        JobStorage.Current = new SqlServerStorage(connectionString);
+        JobStorage.Current = new SqlServerStorage(dbConnFunc);
     }
 
     private static void AddAuthorizedUmbracoDashboard(IUmbracoBuilder builder)
