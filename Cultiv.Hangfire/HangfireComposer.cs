@@ -64,7 +64,7 @@ public class HangfireComposer : IComposer
                 {
                     endpoints.MapHangfireDashboardWithAuthorizationPolicy(
                         pattern: Constants.System.Endpoint,
-                        options: new DashboardOptions() { IgnoreAntiforgeryToken = true },
+                        options: new DashboardOptions { IgnoreAntiforgeryToken = true },
                         authorizationPolicyName: AuthorizationPolicies.SectionAccessSettings);
                 })
             });
