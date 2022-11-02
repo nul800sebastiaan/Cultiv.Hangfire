@@ -14,5 +14,15 @@
     <iframe name="hangfireIframe" class="hangfireContent" id="Hangfire" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0"
             src="/umbraco/backoffice/hangfire/" allowfullscreen="true" style="width:100%!important"
             webkitallowfullscreen="true" mozallowfullscreen="true"
-            oallowfullscreen msallowfullscreen="true"></iframe>
+            oallowfullscreen msallowfullscreen="true" onLoad="makeBodyWider();"></iframe>
 </div>    
+
+<script>
+    function makeBodyWider() {
+        const iframe = document.getElementById('Hangfire');
+        const style = document.createElement('style');
+        style.textContent = '.container { width: 99%; } .word-break.width-15 { width: 30%; }';
+        const headElement = iframe.contentDocument.head;
+        headElement.appendChild(style);
+    }
+</script>
