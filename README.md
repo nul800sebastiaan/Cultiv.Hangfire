@@ -37,3 +37,7 @@ namespace MyNamespace
     }
 }
 ```
+
+In the Umbraco backoffice it will look a little something like this:
+
+![Screenshot of Cultiv.Hangfire installed in Umbraco](screenshot.png)

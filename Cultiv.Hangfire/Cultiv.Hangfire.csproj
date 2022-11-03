@@ -7,7 +7,7 @@
         <PackageId>Cultiv.Hangfire</PackageId>
         <Title>Hangfire dashboard for Umbraco</Title>
         <Description>This installs Hangfire and a dashboard in Umbraco, the dashboard is secured and is only available for users with access to the Settings section of Umbraco</Description>
-        <PackageTags>umbraco plugin package</PackageTags>
+        <PackageTags>umbraco plugin package umbraco-marketplace</PackageTags>
         <RootNamespace>Cultiv.Hangfire</RootNamespace>
         <Authors>Sebastiaan Janssen</Authors>
         <PackageProjectUrl>https://github.com/nul800sebastiaan/Cultiv.Hangfire</PackageProjectUrl>

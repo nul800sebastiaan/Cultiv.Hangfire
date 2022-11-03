@@ -1,0 +1,25 @@
+{
+    "AlternatePackageNames": [
+        "Cultiv.Hangfire"
+    ],
+    "AuthorDetails": {
+        "Description": "About Sebastiaan: from fostering contributions to learning what makes our developer community tick ☑️, to hosting a weekly open coding session to making coffee ☕ for colleagues. I do it all.  But I do need my kayak 🛶 sessions and live music 🎸too. Remember live music, from the before times?",
+        "Url": "https://cultiv.nl",
+        "ImageUrl": "https://avatars.githubusercontent.com/u/304656?v=4"
+    },
+    "Category": "CMS Extensions",
+    "LicenseType": "Free",
+    "PackageType": "Package",
+    "PackagesByAuthor": [],
+    "RelatedPackages": [],
+    "Screenshots": [
+        {
+            "ImageUrl": "https://raw.githubusercontent.com/nul800sebastiaan/Cultiv.Hangfire/main/screenshot.png",
+            "Caption": "Screenshot of Cultiv.Hangfire installed in Umbraco"
+        }
+    ],
+    "Tags": [
+        "Hangfire",
+        "dashboard"
+    ]
+}
