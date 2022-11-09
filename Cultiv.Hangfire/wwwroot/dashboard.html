@@ -1,20 +1,18 @@
-<style type="text/css">
+<style>
     .hangfireWrapper {
         margin: -30px -20px;
     }
 
     .hangfireContent {
         position: absolute;
-        width: 100%;
+        width: 100%!important;
         height: 100%;
     }
 </style>
 
 <div class="hangfireWrapper">
-    <iframe name="hangfireIframe" class="hangfireContent" id="Hangfire" frameborder="0" scrolling="yes" marginheight="0" marginwidth="0"
-            src="/umbraco/backoffice/hangfire/" allowfullscreen="true" style="width:100%!important"
-            webkitallowfullscreen="true" mozallowfullscreen="true"
-            oallowfullscreen msallowfullscreen="true" onLoad="makeBodyWider();"></iframe>
+    <iframe name="hangfireIframe" class="hangfireContent" id="Hangfire" src="/umbraco/backoffice/hangfire/" 
+            onLoad="makeBodyWider();"></iframe>
 </div>    
 
 <script>

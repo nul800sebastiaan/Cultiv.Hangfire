@@ -1,8 +1,10 @@
 ﻿using System;
 using Hangfire;
 using Hangfire.Console;
+using Hangfire.Dashboard;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -27,17 +29,22 @@ public class HangfireComposer : IComposer
 
         // Explicitly use the SqlConnection in the Microsoft.Data namespace to support extended connection string parameters such as "authentication"
         // https://github.com/HangfireIO/Hangfire/issues/1827
-        var dbConnFunc = () => new Microsoft.Data.SqlClient.SqlConnection(connectionString);
+        SqlConnection ConnectionFactory() => new(connectionString);
 
         // Configure Hangfire to use our current database and add the option to write console messages
         builder.Services.AddHangfire(configuration =>
         {
             configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseColouredConsoleLogProvider()
+                .UseDashboardMetric(SqlServerStorage.ActiveConnections)
+                .UseDashboardMetric(SqlServerStorage.TotalConnections)
+                .UseDashboardMetric(DashboardMetrics.AwaitingCount)
+                .UseDashboardMetric(DashboardMetrics.FailedCount)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseRecommendedSerializerSettings()
                 .UseConsole()
-                .UseSqlServerStorage(dbConnFunc, new SqlServerStorageOptions
+                .UseSqlServerStorage((Func<SqlConnection>)ConnectionFactory, new SqlServerStorageOptions
                 {
                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
                     SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
@@ -54,7 +61,7 @@ public class HangfireComposer : IComposer
 
         // For some reason we need to give it the connection string again, else we get this error:
         // https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
-        JobStorage.Current = new SqlServerStorage(dbConnFunc);
+        JobStorage.Current = new SqlServerStorage((Func<SqlConnection>)ConnectionFactory);
     }
 
     private static void AddAuthorizedUmbracoDashboard(IUmbracoBuilder builder)
