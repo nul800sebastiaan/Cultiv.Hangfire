@@ -12,12 +12,6 @@
     "PackageType": "Package",
     "PackagesByAuthor": [],
     "RelatedPackages": [],
-    "Screenshots": [
-        {
-            "ImageUrl": "https://raw.githubusercontent.com/nul800sebastiaan/Cultiv.Hangfire/main/screenshot.png",
-            "Caption": "Screenshot of Cultiv.Hangfire installed in Umbraco"
-        }
-    ],
     "Tags": [
         "Hangfire",
         "dashboard",
