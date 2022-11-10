@@ -15,6 +15,10 @@
     "Tags": [
         "Hangfire",
         "dashboard",
-        "backoffice"
+        "backoffice",
+        "recurring jobs",
+        "job runner",
+        "task runner",
+        "background task"
     ]
 }
