@@ -1,4 +1,5 @@
 {
+    "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
     "AlternatePackageNames": [
         "Cultiv Hangfire"
     ],
@@ -7,10 +8,15 @@
         "Url": "https://cultiv.nl",
         "ImageUrl": "http://github.com/nul800sebastiaan.png"
     },
-    "Category": "CMS Extensions",
-    "LicenseType": "Free",
-    "PackageType": "Package",
-    "PackagesByAuthor": [],
+    "Category": "Developer Tools",
+    "LicenseTypes": [
+        "Free"
+    ],
+    "IssueTrackerUrl": "https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues",
+    "PackageType": "Integration",
+    "PackagesByAuthor": [
+        "Cultiv.EnvironmentInspect"
+    ],
     "RelatedPackages": [],
     "Tags": [
         "Hangfire",
