@@ -19,12 +19,7 @@ public class HangfireComposer : IComposer
 	  public void Compose(IUmbracoBuilder builder)
     {   
 	      var settings = builder.Config.GetSection("Hangfire").Get<HangfireSettings>();
-	      if (!settings.Disabled.GetValueOrDefault(false))
-	      {
-		      return;
-	      }
-
-        builder.ManifestFilters().Append<ManifestFilter>();
+	      builder.ManifestFilters().Append<ManifestFilter>();
 
         var connectionString = builder.GetConnectionString();
         if (string.IsNullOrEmpty(connectionString))
@@ -61,10 +56,12 @@ public class HangfireComposer : IComposer
                 });
         });
 
-        // Run the required server so your queued jobs will get executed
-        builder.Services.AddHangfireServer();
-
-        AddAuthorizedUmbracoDashboard(builder);
+        if (!settings.Disabled.GetValueOrDefault(false))
+        {
+	          // Run the required server so your queued jobs will get executed
+	          builder.Services.AddHangfireServer();
+	          AddAuthorizedUmbracoDashboard(builder);
+        }
 
         // For some reason we need to give it the connection string again, else we get this error:
         // https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
