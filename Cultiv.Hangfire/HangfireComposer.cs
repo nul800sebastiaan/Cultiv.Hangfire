@@ -5,6 +5,7 @@ using Hangfire.Dashboard;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -15,8 +16,14 @@ namespace Cultiv.Hangfire;
 
 public class HangfireComposer : IComposer
 {
-    public void Compose(IUmbracoBuilder builder)
-    {
+	  public void Compose(IUmbracoBuilder builder)
+    {   
+	      var settings = builder.Config.GetSection("Hangfire").Get<HangfireSettings>();
+	      if (!settings.Disabled.GetValueOrDefault(false))
+	      {
+		      return;
+	      }
+
         builder.ManifestFilters().Append<ManifestFilter>();
 
         var connectionString = builder.GetConnectionString();
