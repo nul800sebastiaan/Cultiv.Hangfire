@@ -18,7 +18,7 @@ public class HangfireComposer : IComposer
     public void Compose(IUmbracoBuilder builder)
     {
         builder.ManifestFilters().Append<ManifestFilter>();
-
+            
         var connectionString = builder.GetConnectionString();
         if (string.IsNullOrEmpty(connectionString))
         {
@@ -35,7 +35,7 @@ public class HangfireComposer : IComposer
         builder.Services.AddHangfire(configuration =>
         {
             configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseColouredConsoleLogProvider()
                 .UseDashboardMetric(SqlServerStorage.ActiveConnections)
                 .UseDashboardMetric(SqlServerStorage.TotalConnections)
@@ -46,6 +46,8 @@ public class HangfireComposer : IComposer
                 .UseConsole()
                 .UseSqlServerStorage((Func<SqlConnection>)ConnectionFactory, new SqlServerStorageOptions
                 {
+                    PrepareSchemaIfNecessary = true,
+                    EnableHeavyMigrations = true,
                     CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
                     SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
                     QueuePollInterval = TimeSpan.Zero,
