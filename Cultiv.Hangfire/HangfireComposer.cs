@@ -14,22 +14,22 @@ using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using Umbraco.Cms.Web.Common.Authorization;
 using Umbraco.Extensions;
 
-namespace Cultiv.Hangfire; 
+namespace Cultiv.Hangfire;
 
 public class HangfireComposer : IComposer
 {
-	  public void Compose(IUmbracoBuilder builder)
-    {   
-	      var settings = builder.Config.GetSection("Hangfire:Server").Get<HangfireSettings>();
-          
-	      builder.ManifestFilters().Append<ManifestFilter>();
-        
+    public void Compose(IUmbracoBuilder builder)
+    {
+        var settings = builder.Config.GetSection("Hangfire:Server").Get<HangfireSettings>();
+
+        builder.ManifestFilters().Append<ManifestFilter>();
+
         var provider = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
-        
+
         if (provider.InvariantEquals("Microsoft.Data.SQLite"))
         {
             GlobalConfiguration.Configuration.UseSQLiteStorage();
-            
+
             builder.Services.AddHangfire(configuration =>
             {
                 configuration
@@ -44,12 +44,12 @@ public class HangfireComposer : IComposer
                     .UseConsole();
             });
 
-            if (!settings.Disabled.GetValueOrDefault(false))
+            if (settings != null && !settings.Disabled.GetValueOrDefault(false))
             {
                 // Run the required server so your queued jobs will get executed
                 builder.Services.AddHangfireServer();
             }
-            
+
             AddAuthorizedUmbracoDashboard(builder);
 
             return;
@@ -92,12 +92,12 @@ public class HangfireComposer : IComposer
                 });
         });
 
-        if (!settings.Disabled.GetValueOrDefault(false))
+        if (settings != null && !settings.Disabled.GetValueOrDefault(false))
         {
-	          // Run the required server so your queued jobs will get executed
-	          builder.Services.AddHangfireServer();
+            // Run the required server so your queued jobs will get executed
+            builder.Services.AddHangfireServer();
         }
-        
+
         AddAuthorizedUmbracoDashboard(builder);
         // For some reason we need to give it the connection string again, else we get this error:
         // https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
