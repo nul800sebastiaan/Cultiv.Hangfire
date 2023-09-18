@@ -20,7 +20,12 @@ public class HangfireComposer : IComposer
 {
     public void Compose(IUmbracoBuilder builder)
     {
-        var settings = builder.Config.GetSection("Hangfire:Server").Get<HangfireSettings>();
+        var serverDisabled = false;
+        var settings = builder.Config.GetSection("Hangfire").Get<HangfireSettings>();
+        if (settings != null && settings.Server != null)
+        {
+            serverDisabled = settings.Server.Disabled.GetValueOrDefault(defaultValue: false);
+        }
 
         builder.ManifestFilters().Append<ManifestFilter>();
 
@@ -44,7 +49,7 @@ public class HangfireComposer : IComposer
                     .UseConsole();
             });
 
-            if (settings != null && !settings.Disabled.GetValueOrDefault(false))
+            if (!serverDisabled)
             {
                 // Run the required server so your queued jobs will get executed
                 builder.Services.AddHangfireServer();
@@ -92,7 +97,7 @@ public class HangfireComposer : IComposer
                 });
         });
 
-        if (settings != null && !settings.Disabled.GetValueOrDefault(false))
+        if (!serverDisabled)
         {
             // Run the required server so your queued jobs will get executed
             builder.Services.AddHangfireServer();

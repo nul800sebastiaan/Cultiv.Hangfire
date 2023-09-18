@@ -2,5 +2,10 @@
 
 public class HangfireSettings
 {
-    public bool? Disabled { get; set; }
+    public Server Server { get; set; }
+}
+
+public class Server
+{
+    public bool? Disabled { get; set; } 
 }
