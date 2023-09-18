@@ -6,6 +6,7 @@ using Hangfire.SqlServer;
 using Hangfire.Storage.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
@@ -17,9 +18,11 @@ namespace Cultiv.Hangfire;
 
 public class HangfireComposer : IComposer
 {
-    public void Compose(IUmbracoBuilder builder)
-    {
-        builder.ManifestFilters().Append<ManifestFilter>();
+	  public void Compose(IUmbracoBuilder builder)
+    {   
+	      var settings = builder.Config.GetSection("Hangfire:Server").Get<HangfireSettings>();
+          
+	      builder.ManifestFilters().Append<ManifestFilter>();
         
         var provider = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
         
@@ -40,12 +43,15 @@ public class HangfireComposer : IComposer
                     .UseRecommendedSerializerSettings()
                     .UseConsole();
             });
-            
-            // Run the required server so your queued jobs will get executed
-            builder.Services.AddHangfireServer();
 
-            AddAuthorizedUmbracoDashboard(builder);
+            if (!settings.Disabled.GetValueOrDefault(false))
+            {
+                // Run the required server so your queued jobs will get executed
+                builder.Services.AddHangfireServer();
+            }
             
+            AddAuthorizedUmbracoDashboard(builder);
+
             return;
         }
 
@@ -86,9 +92,12 @@ public class HangfireComposer : IComposer
                 });
         });
 
-        // Run the required server so your queued jobs will get executed
-        builder.Services.AddHangfireServer();
-
+        if (!settings.Disabled.GetValueOrDefault(false))
+        {
+	          // Run the required server so your queued jobs will get executed
+	          builder.Services.AddHangfireServer();
+        }
+        
         AddAuthorizedUmbracoDashboard(builder);
         // For some reason we need to give it the connection string again, else we get this error:
         // https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
