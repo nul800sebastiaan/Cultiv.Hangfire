@@ -41,3 +41,13 @@ namespace MyNamespace
 In the Umbraco backoffice it will look a little something like this:
 
 ![Screenshot of Cultiv.Hangfire installed in Umbraco](https://raw.githubusercontent.com/nul800sebastiaan/Cultiv.Hangfire/main/screenshot.png)
+
+## Umbraco Cloud
+Note, if you are using Umbraco Cloud, you will need to add a connection string to your `appsettings.json` file. Without this, you will get errors. 
+Simply put the following in to your `appsettings.json` file.
+
+```
+ "umbracoDbDSN": "Data Source=|DataDirectory|/Umbraco.sqlite.db;Cache=Private;Foreign Keys=True;Pooling=True",
+    "umbracoDbDSN_ProviderName": "Microsoft.Data.SQLite"
+```
+The important thing to note is that the key for the connection string should be "umbracoDbDSN". It is also important to know that this section is outside the Umbraco.CMS section, and is therefore in the root of the config.
