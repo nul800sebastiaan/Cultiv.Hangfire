@@ -4,7 +4,20 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
+        <Product>Cultiv.Hangfire</Product>
+        <PackageId>Cultiv.Hangfire</PackageId>
+        <Title>Hangfire dashboard for Umbraco</Title>
+        <Description>This installs Hangfire and a dashboard in Umbraco, the dashboard is secured and is only available for users with access to the Settings section of Umbraco</Description>
+        <PackageTags>umbraco plugin package umbraco-marketplace</PackageTags>
+        <RootNamespace>Cultiv.Hangfire</RootNamespace>
+        <Authors>Sebastiaan Janssen</Authors>
+        <PackageProjectUrl>https://github.com/nul800sebastiaan/Cultiv.Hangfire</PackageProjectUrl>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageIcon>logo.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+		
     </PropertyGroup>
+	
     <ItemGroup>
         <SupportedPlatform Include="browser"/>
     </ItemGroup>
@@ -16,4 +29,10 @@
         <PackageReference Include="Microsoft.AspNet.Identity.Owin" Version="2.2.4"/>
         <PackageReference Include="Hangfire.Storage.SQLite" Version="0.3.4"/>
     </ItemGroup>
+	
+    <ItemGroup>
+        <None Include="../README.md" Pack="true" PackagePath="" />
+        <None Include="../LICENSE" Pack="true" PackagePath="" />
+        <None Include="../logo.png" Pack="true" PackagePath="" />
+    </ItemGroup>	
 </Project>
