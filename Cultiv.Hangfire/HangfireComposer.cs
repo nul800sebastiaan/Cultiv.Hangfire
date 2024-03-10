@@ -3,11 +3,11 @@ using Hangfire.Console;
 using Hangfire.Dashboard;
 using Hangfire.SqlServer;
 using Hangfire.Storage.SQLite;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Cms.Web.Common.ApplicationBuilder;
+using Umbraco.Extensions;
 
 namespace Cultiv.Hangfire;
 
@@ -15,45 +15,73 @@ public class HangfireComposer : IComposer
 {
     public void Compose(IUmbracoBuilder builder)
     {
-        GlobalConfiguration.Configuration.UseSQLiteStorage();
+        var serverDisabled = false;
+        var settings = builder.Config.GetSection("Hangfire").Get<HangfireSettings>();
+        if (settings != null && settings.Server != null)
+        {
+            serverDisabled = settings.Server.Disabled.GetValueOrDefault(defaultValue: false);
+        }
+        
+        var provider = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
 
-        builder.Services.AddHangfire(configuration =>
+        if (provider.InvariantEquals("Microsoft.Data.SQLite"))
         {
-            configuration
-                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-                .UseColouredConsoleLogProvider()
-                .UseDashboardMetric(SqlServerStorage.ActiveConnections)
-                .UseDashboardMetric(SqlServerStorage.TotalConnections)
-                .UseDashboardMetric(DashboardMetrics.AwaitingCount)
-                .UseDashboardMetric(DashboardMetrics.FailedCount)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseConsole();
-        });
-        
-        builder.Services.AddAuthorizationBuilder()
-            .AddPolicy("Cultiv.Hangfire", policy =>
+            GlobalConfiguration.Configuration.UseSQLiteStorage();
+
+            builder.Services.AddHangfire(configuration =>
             {
-                policy
-                    .AddAuthenticationSchemes(Umbraco.Cms.Core.Constants.Security.BackOfficeAuthenticationType)
-                    .RequireClaim(Umbraco.Cms.Core.Constants.Security.AllowedApplicationsClaimType, Umbraco.Cms.Core.Constants.Applications.Settings)
-                    .RequireAuthenticatedUser();
+                configuration
+                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                    .UseColouredConsoleLogProvider()
+                    .UseDashboardMetric(SqlServerStorage.ActiveConnections)
+                    .UseDashboardMetric(SqlServerStorage.TotalConnections)
+                    .UseDashboardMetric(DashboardMetrics.AwaitingCount)
+                    .UseDashboardMetric(DashboardMetrics.FailedCount)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseConsole();
             });
-        builder.Services.AddHangfireServer();
-        
-        // Add the dashboard and make sure it's authorized with the named policy above
-        builder.Services.Configure<UmbracoPipelineOptions>(options =>
+        }
+        else
         {
-            options.AddFilter(new UmbracoPipelineFilter("HangfireDashboard")
+            var connectionString = builder.GetConnectionString();
+            if (string.IsNullOrEmpty(connectionString))
             {
-                Endpoints = app => app.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapHangfireDashboard(
-                            pattern: "/umbraco/hangfire",
-                            options: new DashboardOptions { IgnoreAntiforgeryToken = true })
-                        .RequireAuthorization("Cultiv.Hangfire");
-                })
+                // This might happen when the package is installed before Umbraco is installed
+                // https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/11
+                return;
+            }
+
+            // Explicitly use the SqlConnection in the Microsoft.Data namespace to support extended connection string parameters such as "authentication"
+            // https://github.com/HangfireIO/Hangfire/issues/1827
+            SqlConnection ConnectionFactory() => new(connectionString);
+
+            // Configure Hangfire to use our current database and add the option to write console messages
+            builder.Services.AddHangfire(configuration =>
+            {
+                configuration
+                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                    .UseColouredConsoleLogProvider()
+                    .UseDashboardMetric(SqlServerStorage.ActiveConnections)
+                    .UseDashboardMetric(SqlServerStorage.TotalConnections)
+                    .UseDashboardMetric(DashboardMetrics.AwaitingCount)
+                    .UseDashboardMetric(DashboardMetrics.FailedCount)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseConsole()
+                    .UseSqlServerStorage((Func<SqlConnection>)ConnectionFactory, new SqlServerStorageOptions
+                    {
+                        PrepareSchemaIfNecessary = true,
+                        EnableHeavyMigrations = true,
+                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                        QueuePollInterval = TimeSpan.Zero,
+                        UseRecommendedIsolationLevel = true,
+                        DisableGlobalLocks = true
+                    });
             });
-        });
+        }
+        
+        builder.AddHangfireToUmbraco(serverDisabled: serverDisabled);
     }
 }

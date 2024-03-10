@@ -23,6 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Umbraco.Cms.Persistence.SqlServer" Version="14.0.0-beta001" />
         <PackageReference Include="Umbraco.Cms.Web.Website" Version="14.0.0-beta001"/>
         <PackageReference Include="Hangfire" Version="1.8.9"/>
         <PackageReference Include="Hangfire.Console" Version="1.4.3"/>
