@@ -41,6 +41,13 @@ public class HangfireComposer : IComposer
                     .UseRecommendedSerializerSettings()
                     .UseConsole();
             });
+            
+            builder.AddHangfireToUmbraco(serverDisabled: serverDisabled);
+            
+            // Explicitly set the storage parameters - needed if there if this is the first time Hangfire
+            // gets initialized and there is already code to schedule jobs 
+            // Prevents: https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
+            JobStorage.Current = new SQLiteStorage("Hangfire.db", new SQLiteStorageOptions());
         }
         else
         {
@@ -80,8 +87,13 @@ public class HangfireComposer : IComposer
                         DisableGlobalLocks = true
                     });
             });
+            
+            builder.AddHangfireToUmbraco(serverDisabled: serverDisabled);
+            
+            // Explicitly set the storage parameters - needed if there if this is the first time Hangfire
+            // gets initialized and there is already code to schedule jobs 
+            // Prevents: https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
+            JobStorage.Current = new SqlServerStorage((Func<SqlConnection>)ConnectionFactory);
         }
-        
-        builder.AddHangfireToUmbraco(serverDisabled: serverDisabled);
-    }
+    }   
 }

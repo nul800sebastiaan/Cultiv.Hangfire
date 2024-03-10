@@ -8,10 +8,8 @@ namespace Cultiv.Hangfire.Web
     public class Composer : IComposer
     {
         public void Compose(IUmbracoBuilder builder)
-        {     
-            // Enable this to test after the first run of the website
-            
-            //RecurringJob.AddOrUpdate(() => DoIt(null), Cron.Hourly());
+        {
+            RecurringJob.AddOrUpdate(() => DoIt(null), Cron.Hourly());
         }
         
         public void DoIt(PerformContext context)

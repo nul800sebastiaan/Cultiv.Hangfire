@@ -5,7 +5,7 @@
         public static class System
         {
             public const string HangfireDashboard = nameof(HangfireDashboard);
-            public const string Endpoint = "/umbraco/backoffice";
+            public const string Endpoint = "/umbraco/hangfire";
             public const string AlternativeConnectionStringName = "hangfireDB";
             public const string AuthenticationPolicyName = "Cultiv.Hangfire.AuthenticationPolicy";
         }
