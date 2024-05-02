@@ -1,5 +1,3 @@
-import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
-
 const template = document.createElement('template');
 template.innerHTML = `
             <style>
@@ -26,7 +24,7 @@ template.innerHTML = `
 `;
 
 
-export default class CultivHangfireDashboardElement extends UmbElementMixin(HTMLElement) {
+export default class CultivHangfireDashboardElement extends HTMLElement {
 
     constructor() {
         super();
