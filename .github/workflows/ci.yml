@@ -2,9 +2,11 @@ on:
   push:
     branches:
     - main
+    - bellissima
   pull_request:
     branches:
-    - main    
+    - main
+    - bellissima
 jobs:
   build:
     runs-on: ubuntu-latest
