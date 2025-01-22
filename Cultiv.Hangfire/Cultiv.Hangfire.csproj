@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
@@ -19,17 +19,16 @@
     </PropertyGroup>
 	
     <ItemGroup>
-        <SupportedPlatform Include="browser"/>
+        <SupportedPlatform Include="browser" />
     </ItemGroup>
 
     <ItemGroup>
         <!-- Next lines specifies that you need at least v14 beta1 installed to be able to install this package --> 
-        <PackageReference Include="Umbraco.Cms" Version="14.0.0" />
-        <PackageReference Include="Umbraco.Cms.Persistence.SqlServer" Version="14.0.0" />
-        <PackageReference Include="Umbraco.Cms.Web.Website" Version="14.0.0"/>
-        <PackageReference Include="Hangfire" Version="1.8.12" />
-        <PackageReference Include="Hangfire.Console" Version="1.4.3"/>
-        <PackageReference Include="Microsoft.AspNet.Identity.Owin" Version="2.2.4"/>
+        <PackageReference Include="Umbraco.Cms" Version="15.1.2" />
+        <PackageReference Include="Umbraco.Cms.Persistence.SqlServer" Version="15.1.2" />
+        <PackageReference Include="Umbraco.Cms.Web.Website" Version="15.1.2" />
+        <PackageReference Include="Hangfire" Version="1.8.17" />
+        <PackageReference Include="Hangfire.Console" Version="1.4.3" />
         <PackageReference Include="Hangfire.Storage.SQLite" Version="0.4.2" />
     </ItemGroup>
 	

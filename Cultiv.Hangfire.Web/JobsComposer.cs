@@ -9,14 +9,14 @@ namespace Cultiv.Hangfire.Web
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            RecurringJob.AddOrUpdate(() => DoIt(null), Cron.Hourly());
+            RecurringJob.AddOrUpdate("DoItJob", () => DoIt(null!), Cron.Hourly(), new RecurringJobOptions());
         }
-        
+
         public void DoIt(PerformContext context)
         {
-            var progressBar =  context.WriteProgressBar();
-            var items = new int[10]{ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
-        
+            var progressBar = context.WriteProgressBar();
+            var items = new int[10] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 };
+
             foreach (var item in items.WithProgress(progressBar, items.Length))
             {
                 context.WriteLine($"Number: {item}");
