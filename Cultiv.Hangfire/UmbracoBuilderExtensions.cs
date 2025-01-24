@@ -19,15 +19,6 @@ public static class UmbracoBuilderExtensions
     
     internal static void AddHangfireToUmbraco(this IUmbracoBuilder builder, bool serverDisabled)
     {
-        builder.Services.AddAuthorizationBuilder()
-            .AddPolicy(Constants.System.AuthenticationPolicyName, policy =>
-            {
-                policy
-                    .AddAuthenticationSchemes(Umbraco.Cms.Core.Constants.Security.BackOfficeAuthenticationType)
-                    .RequireClaim(Umbraco.Cms.Core.Constants.Security.AllowedApplicationsClaimType, Umbraco.Cms.Core.Constants.Applications.Settings)
-                    .RequireAuthenticatedUser();
-            });
-
         if (!serverDisabled)
         {
             builder.Services.AddHangfireServer();
@@ -41,8 +32,7 @@ public static class UmbracoBuilderExtensions
                 {
                     endpoints.MapHangfireDashboard(
                             pattern: Constants.System.Endpoint,
-                            options: new DashboardOptions { IgnoreAntiforgeryToken = true })
-                        .RequireAuthorization(Constants.System.AuthenticationPolicyName);
+                            options: new DashboardOptions { IgnoreAntiforgeryToken = true });
                 })
             });
         });

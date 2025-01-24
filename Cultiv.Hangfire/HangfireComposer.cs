@@ -22,7 +22,7 @@ public class HangfireComposer : IComposer
             serverDisabled = settings.Server.Disabled.GetValueOrDefault(defaultValue: false);
         }
         
-        var provider = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
+        var provider = builder.Config.GetConnectionStringProviderName(Constants.System.AlternativeConnectionStringName);
 
         if (provider.InvariantEquals("Microsoft.Data.SQLite"))
         {

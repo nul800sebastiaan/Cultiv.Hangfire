@@ -17,6 +17,10 @@
         {
           "alias": "Umb.Condition.SectionAlias",
           "match": "Umb.Section.Settings"
+        },
+        {
+          "alias": "Umb.Condition.SectionUserPermission",
+          "match": "Umb.Section.Settings"
         }
       ]
     }
