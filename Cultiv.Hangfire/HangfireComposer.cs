@@ -22,7 +22,7 @@ public class HangfireComposer : IComposer
             serverDisabled = settings.Server.Disabled.GetValueOrDefault(defaultValue: false);
         }
         
-        var provider = builder.Config.GetConnectionStringProviderName(Constants.System.AlternativeConnectionStringName);
+        var provider = builder.GetProviderName();
 
         if (provider.InvariantEquals("Microsoft.Data.SQLite"))
         {

@@ -17,6 +17,13 @@ public static class UmbracoBuilderExtensions
         return string.IsNullOrWhiteSpace(connectionString) ? builder.Config.GetUmbracoConnectionString() : connectionString;
     }
     
+    public static string? GetProviderName(this IUmbracoBuilder builder)
+    {
+        var provider =
+            builder.Config.GetConnectionStringProviderName(Constants.System.AlternativeConnectionStringName);
+        return string.IsNullOrWhiteSpace(provider) ? builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName) : provider;
+    }
+
     internal static void AddHangfireToUmbraco(this IUmbracoBuilder builder, bool serverDisabled)
     {
         if (!serverDisabled)
