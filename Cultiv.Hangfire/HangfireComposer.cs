@@ -6,8 +6,6 @@ using Hangfire.Storage.SQLite;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Umbraco.Cms.Core.Composing;
-using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Extensions;
 
 namespace Cultiv.Hangfire;
 
@@ -21,33 +19,13 @@ public class HangfireComposer : IComposer
         {
             serverDisabled = settings.Server.Disabled.GetValueOrDefault(defaultValue: false);
         }
-        
-        var provider = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
+
+        var provider =
+            builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
 
         if (provider.InvariantEquals("Microsoft.Data.SQLite"))
         {
-            GlobalConfiguration.Configuration.UseSQLiteStorage();
-
-            builder.Services.AddHangfire(configuration =>
-            {
-                configuration
-                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-                    .UseColouredConsoleLogProvider()
-                    .UseDashboardMetric(SqlServerStorage.ActiveConnections)
-                    .UseDashboardMetric(SqlServerStorage.TotalConnections)
-                    .UseDashboardMetric(DashboardMetrics.AwaitingCount)
-                    .UseDashboardMetric(DashboardMetrics.FailedCount)
-                    .UseSimpleAssemblyNameTypeSerializer()
-                    .UseRecommendedSerializerSettings()
-                    .UseConsole();
-            });
-            
-            builder.AddHangfireToUmbraco(serverDisabled: serverDisabled);
-            
-            // Explicitly set the storage parameters - needed if there if this is the first time Hangfire
-            // gets initialized and there is already code to schedule jobs 
-            // Prevents: https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
-            JobStorage.Current = new SQLiteStorage("Hangfire.db", new SQLiteStorageOptions());
+            UseSqliteStorage(builder, serverDisabled);
         }
         else
         {
@@ -56,44 +34,79 @@ public class HangfireComposer : IComposer
             {
                 // This might happen when the package is installed before Umbraco is installed
                 // https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/11
-                return;
+                // also happens on Umbraco Cloud sites that have been cloned locally - use SQLite instead
+                UseSqliteStorage(builder, serverDisabled);
             }
-
-            // Explicitly use the SqlConnection in the Microsoft.Data namespace to support extended connection string parameters such as "authentication"
-            // https://github.com/HangfireIO/Hangfire/issues/1827
-            SqlConnection ConnectionFactory() => new(connectionString);
-
-            // Configure Hangfire to use our current database and add the option to write console messages
-            builder.Services.AddHangfire(configuration =>
+            else
             {
-                configuration
-                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-                    .UseColouredConsoleLogProvider()
-                    .UseDashboardMetric(SqlServerStorage.ActiveConnections)
-                    .UseDashboardMetric(SqlServerStorage.TotalConnections)
-                    .UseDashboardMetric(DashboardMetrics.AwaitingCount)
-                    .UseDashboardMetric(DashboardMetrics.FailedCount)
-                    .UseSimpleAssemblyNameTypeSerializer()
-                    .UseRecommendedSerializerSettings()
-                    .UseConsole()
-                    .UseSqlServerStorage((Func<SqlConnection>)ConnectionFactory, new SqlServerStorageOptions
-                    {
-                        PrepareSchemaIfNecessary = true,
-                        EnableHeavyMigrations = true,
-                        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                        QueuePollInterval = TimeSpan.Zero,
-                        UseRecommendedIsolationLevel = true,
-                        DisableGlobalLocks = true
-                    });
-            });
-            
-            builder.AddHangfireToUmbraco(serverDisabled: serverDisabled);
-            
-            // Explicitly set the storage parameters - needed if there if this is the first time Hangfire
-            // gets initialized and there is already code to schedule jobs 
-            // Prevents: https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
-            JobStorage.Current = new SqlServerStorage((Func<SqlConnection>)ConnectionFactory);
+                UseSqlServerStorage(builder, connectionString, serverDisabled);
+            }
         }
-    }   
+    }
+
+    private static void UseSqlServerStorage(IUmbracoBuilder builder, string connectionString, bool serverDisabled)
+    {
+        // Explicitly use the SqlConnection in the Microsoft.Data namespace to support extended connection string parameters such as "authentication"
+        // https://github.com/HangfireIO/Hangfire/issues/1827
+        SqlConnection ConnectionFactory() => new(connectionString);
+
+        // Configure Hangfire to use our current database and add the option to write console messages
+        builder.Services.AddHangfire(configuration =>
+        {
+            configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseColouredConsoleLogProvider()
+                .UseDashboardMetric(SqlServerStorage.ActiveConnections)
+                .UseDashboardMetric(SqlServerStorage.TotalConnections)
+                .UseDashboardMetric(DashboardMetrics.AwaitingCount)
+                .UseDashboardMetric(DashboardMetrics.FailedCount)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseConsole()
+                .UseSqlServerStorage((Func<SqlConnection>)ConnectionFactory, new SqlServerStorageOptions
+                {
+                    PrepareSchemaIfNecessary = true,
+                    EnableHeavyMigrations = true,
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    DisableGlobalLocks = true
+                });
+        });
+
+        builder.AddHangfireToUmbraco(serverDisabled: serverDisabled);
+
+        // Explicitly set the storage parameters - needed if there if this is the first time Hangfire
+        // gets initialized and there is already code to schedule jobs 
+        // Prevents: https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
+        JobStorage.Current = new SqlServerStorage((Func<SqlConnection>)ConnectionFactory);
+    }
+
+    private static void UseSqliteStorage(IUmbracoBuilder builder, bool serverDisabled)
+    {
+        GlobalConfiguration.Configuration.UseSQLiteStorage();
+
+        builder.Services.AddHangfire(configuration =>
+        {
+            configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseColouredConsoleLogProvider()
+                .UseDashboardMetric(SqlServerStorage.ActiveConnections)
+                .UseDashboardMetric(SqlServerStorage.TotalConnections)
+                .UseDashboardMetric(DashboardMetrics.AwaitingCount)
+                .UseDashboardMetric(DashboardMetrics.FailedCount)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseConsole();
+        });
+
+        builder.AddHangfireToUmbraco(serverDisabled: serverDisabled);
+
+
+        // Explicitly set the storage parameters - needed if there if this is the first time Hangfire
+        // gets initialized and there is already code to schedule jobs 
+        // Prevents: https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
+        JobStorage.Current = new SQLiteStorage("Hangfire.db", new SQLiteStorageOptions());
+    }
 }
