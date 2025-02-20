@@ -1,25 +1,19 @@
 const template = document.createElement('template');
 template.innerHTML = `
-            <style>
-                .hangfireWrapper {
-                    margin: -20px -20px;
+            <style>           
+                .hangfire-wrapper {
+                     margin: -20px -20px;
                 }
-
-                .hangfireContent {
-                    position: absolute;
-                    width: 100% !important;
-                    height: 100%;
-                }
-                uui-box {
-                    height: 100%;
+                .hangfire-content { 
+                    display: block;
+                    border: none;
+                    height: 100vh;
+                    width: 100%;
                 }
             </style>
 
-            <uui-box>
-                <div class="hangfireWrapper">
-                    <iframe name="hangfireIframe" class="hangfireContent" id="Hangfire"
-                            src="/umbraco/hangfire/"></iframe>
-                </div>
+            <uui-box class="hangfire-wrapper">                
+                <iframe name="hangfireIframe" class="hangfire-content" id="Hangfire" src="/umbraco/hangfire/"></iframe>
             </uui-box>
 `;
 
