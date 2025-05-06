@@ -41,3 +41,17 @@ namespace MyNamespace
 In the Umbraco backoffice it will look a little something like this:
 
 ![Screenshot of Cultiv.Hangfire installed in Umbraco](https://raw.githubusercontent.com/nul800sebastiaan/Cultiv.Hangfire/main/screenshot.png)
+
+## Notes for specific versions this pacakge and Umbraco
+
+- Version 4+ of this package works with Umbraco versions 14 and above
+- Version 3 and below works with Umbraco 13 and below
+
+### Umbraco 8
+
+- You might need to change your `web.config` to make sure the `~/hangfire` path is ignored: `<add key="Umbraco.Core.ReservedPaths" value="~/hangfire" />`
+
+### Umbraco 13
+
+- You might need to add the following above your `IComposer`s that schedule the jobs: `[ComposeAfter(typeof(HangfireComposer))]` ([see this issue](https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/3#issuecomment-2823912302))
+ 
