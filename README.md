@@ -42,7 +42,7 @@ In the Umbraco backoffice it will look a little something like this:
 
 ![Screenshot of Cultiv.Hangfire installed in Umbraco](https://raw.githubusercontent.com/nul800sebastiaan/Cultiv.Hangfire/main/screenshot.png)
 
-## Notes for specific versions this pacakge and Umbraco
+## Notes for specific versions this package and Umbraco
 
 - Version 4+ of this package works with Umbraco versions 14 and above
 - Version 3 and below works with Umbraco 13 and below
