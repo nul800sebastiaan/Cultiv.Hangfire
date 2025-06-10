@@ -28,7 +28,7 @@ public class HangfireComposer : IComposer
         }
         if (serverDisabled)
         {
-            return
+            return;
         }
         builder.ManifestFilters().Append<ManifestFilter>();
 
@@ -52,11 +52,9 @@ public class HangfireComposer : IComposer
                     .UseConsole();
             });
 
-            if (!serverDisabled)
-            {
-                // Run the required server so your queued jobs will get executed
-                builder.Services.AddHangfireServer();
-            }
+            // Run the required server so your queued jobs will get executed
+            builder.Services.AddHangfireServer();
+
 
             AddAuthorizedUmbracoDashboard(builder);
 
@@ -100,11 +98,8 @@ public class HangfireComposer : IComposer
                 });
         });
 
-        if (!serverDisabled)
-        {
-            // Run the required server so your queued jobs will get executed
-            builder.Services.AddHangfireServer();
-        }
+        // Run the required server so your queued jobs will get executed
+        builder.Services.AddHangfireServer();
 
         AddAuthorizedUmbracoDashboard(builder);
         // For some reason we need to give it the connection string again, else we get this error:
