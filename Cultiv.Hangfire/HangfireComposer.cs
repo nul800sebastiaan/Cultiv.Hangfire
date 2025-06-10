@@ -1,5 +1,4 @@
-﻿using System;
-using Hangfire;
+﻿using Hangfire;
 using Hangfire.Console;
 using Hangfire.Dashboard;
 using Hangfire.SqlServer;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
@@ -26,7 +26,10 @@ public class HangfireComposer : IComposer
         {
             serverDisabled = settings.Server.Disabled.GetValueOrDefault(defaultValue: false);
         }
-
+        if (serverDisabled)
+        {
+            return
+        }
         builder.ManifestFilters().Append<ManifestFilter>();
 
         var provider = builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
