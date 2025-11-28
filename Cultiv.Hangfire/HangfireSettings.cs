@@ -2,7 +2,7 @@
 
 public class HangfireSettings
 {
-    public Server Server { get; set; }
+    public Server? Server { get; set; }
 }
 
 public class Server

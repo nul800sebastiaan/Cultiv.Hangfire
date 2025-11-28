@@ -1,14 +1,44 @@
-using Umbraco.Cms.Core.DependencyInjection;
-using Umbraco.Extensions;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Web.Common.ApplicationBuilder;
 
 namespace Cultiv.Hangfire;
 
 public static class UmbracoBuilderExtensions
 {
-    public static string GetConnectionString(this IUmbracoBuilder builder)
+    public static string? GetConnectionString(this IUmbracoBuilder builder)
     {
         var connectionString =
-            builder.Config.GetUmbracoConnectionString(Constants.System.AlternativeConnectionStringName);
-        return string.IsNullOrWhiteSpace(connectionString) == false ? connectionString : builder.Config.GetUmbracoConnectionString();
+            builder.Config.GetUmbracoConnectionString(Constants.CultivHangfire.AlternativeConnectionStringName);
+        return string.IsNullOrWhiteSpace(connectionString) ? builder.Config.GetUmbracoConnectionString() : connectionString;
+    }
+    
+    internal static void AddHangfireToUmbraco(this IUmbracoBuilder builder, bool serverDisabled)
+    {
+        if (!serverDisabled)
+        {
+            builder.Services.AddHangfireServer();
+        }
+        else
+        {
+            return;
+        }
+
+        builder.Services.Configure<UmbracoPipelineOptions>(options =>
+        {
+            options.AddFilter(new UmbracoPipelineFilter(Constants.CultivHangfire.HangfireDashboard)
+            {
+                Endpoints = app => app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapHangfireDashboard(
+                        pattern: Constants.CultivHangfire.Endpoint,
+                        options: new DashboardOptions
+                        {
+                            AsyncAuthorization = [ new HangfireCookieAuthorizationFilter() ]
+                        });
+                })
+            });
+        });
     }
 }
