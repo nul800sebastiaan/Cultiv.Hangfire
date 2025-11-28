@@ -44,7 +44,8 @@ In the Umbraco backoffice it will look a little something like this:
 
 ## Notes for specific versions this package and Umbraco
 
-- Version 4+ of this package works with Umbraco versions 14 and above
+- Version 5+ of this package works with Umbraco versions 17 and above
+- Version 4+ of this package works with Umbraco versions 14 through 16
 - Version 3 and below works with Umbraco 9 through 13
 
 ### Umbraco 13
