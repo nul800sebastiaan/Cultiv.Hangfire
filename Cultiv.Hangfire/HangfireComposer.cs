@@ -2,6 +2,7 @@
 using Hangfire.Console;
 using Hangfire.Dashboard;
 using Hangfire.SqlServer;
+using Hangfire.States;
 using Hangfire.Storage.SQLite;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -14,10 +15,16 @@ public class HangfireComposer : IComposer
     public void Compose(IUmbracoBuilder builder)
     {
         var serverDisabled = false;
+        string[] queueNames = [EnqueuedState.DefaultQueue];
         var settings = builder.Config.GetSection("Hangfire").Get<HangfireSettings>();
         if (settings != null && settings.Server != null)
         {
             serverDisabled = settings.Server.Disabled.GetValueOrDefault(defaultValue: false);
+
+            if (settings.Server.QueueNames is { Length: > 0 })
+            {
+                queueNames = settings.Server.QueueNames;
+            }
         }
 
         var provider =
@@ -25,7 +32,7 @@ public class HangfireComposer : IComposer
 
         if (provider.InvariantEquals("Microsoft.Data.SQLite"))
         {
-            UseSqliteStorage(builder, serverDisabled);
+            UseSqliteStorage(builder, serverDisabled, queueNames);
         }
         else
         {
@@ -35,16 +42,16 @@ public class HangfireComposer : IComposer
                 // This might happen when the package is installed before Umbraco is installed
                 // https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/11
                 // also happens on Umbraco Cloud sites that have been cloned locally - use SQLite instead
-                UseSqliteStorage(builder, serverDisabled);
+                UseSqliteStorage(builder, serverDisabled, queueNames);
             }
             else
             {
-                UseSqlServerStorage(builder, connectionString, serverDisabled, settings);
+                UseSqlServerStorage(builder, connectionString, serverDisabled, queueNames, settings);
             }
         }
     }
 
-    private static void UseSqlServerStorage(IUmbracoBuilder builder, string connectionString, bool serverDisabled, HangfireSettings settings)
+    private static void UseSqlServerStorage(IUmbracoBuilder builder, string connectionString, bool serverDisabled, string[] queueNames, HangfireSettings settings)
     {
         // Explicitly use the SqlConnection in the Microsoft.Data namespace to support extended connection string parameters such as "authentication"
         // https://github.com/HangfireIO/Hangfire/issues/1827
@@ -78,7 +85,7 @@ public class HangfireComposer : IComposer
                 });
         });
 
-        builder.AddHangfireToUmbraco(serverDisabled: serverDisabled);
+        builder.AddHangfireToUmbraco(serverDisabled: serverDisabled, queueNames);
 
         // Explicitly set the storage parameters - needed if there if this is the first time Hangfire
         // gets initialized and there is already code to schedule jobs
@@ -86,7 +93,7 @@ public class HangfireComposer : IComposer
         JobStorage.Current = new SqlServerStorage((Func<SqlConnection>)ConnectionFactory);
     }
 
-    private static void UseSqliteStorage(IUmbracoBuilder builder, bool serverDisabled)
+    private static void UseSqliteStorage(IUmbracoBuilder builder, bool serverDisabled, string[] queueNames)
     {
         GlobalConfiguration.Configuration.UseSQLiteStorage();
 
@@ -104,8 +111,7 @@ public class HangfireComposer : IComposer
                 .UseConsole();
         });
 
-        builder.AddHangfireToUmbraco(serverDisabled: serverDisabled);
-
+        builder.AddHangfireToUmbraco(serverDisabled: serverDisabled, queueNames);
 
         // Explicitly set the storage parameters - needed if there if this is the first time Hangfire
         // gets initialized and there is already code to schedule jobs

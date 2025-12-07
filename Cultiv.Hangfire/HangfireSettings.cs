@@ -11,6 +11,7 @@ public class HangfireSettings
 public class Server
 {
     public bool? Disabled { get; set; }
+    public string[]? QueueNames { get; set; }
 }
 
 public class StorageOptions

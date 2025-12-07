@@ -14,11 +14,14 @@ public static class UmbracoBuilderExtensions
         return string.IsNullOrWhiteSpace(connectionString) ? builder.Config.GetUmbracoConnectionString() : connectionString;
     }
     
-    internal static void AddHangfireToUmbraco(this IUmbracoBuilder builder, bool serverDisabled)
+    internal static void AddHangfireToUmbraco(this IUmbracoBuilder builder, bool serverDisabled, string[] queueNames)
     {
         if (!serverDisabled)
         {
-            builder.Services.AddHangfireServer();
+            builder.Services.AddHangfireServer(options =>
+            {
+                options.Queues = queueNames;
+            });
         }
         else
         {
