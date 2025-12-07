@@ -1,12 +1,16 @@
 ﻿namespace Cultiv.Hangfire
 {
     public static class Constants
-    {
-        public static class System
+    {        
+        public static class CultivHangfire
         {
             public const string HangfireDashboard = nameof(HangfireDashboard);
-            public const string Endpoint = "/umbraco/backoffice/hangfire";
+            public const string Endpoint = "/umbraco/hangfire";
             public const string AlternativeConnectionStringName = "hangfireDB";
+            
+            public const string CookiesScheme = "Cultiv.Hangfire.CookieScheme";
+            public const string CookieName = "Cultiv.Hangfire";
+            public const string ClaimType = "HangfireAllowed";
         }
     }
 }

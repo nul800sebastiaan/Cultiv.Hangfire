@@ -4,7 +4,7 @@ namespace Cultiv.Hangfire;
 
 public class HangfireSettings
 {
-    public Server Server { get; set; }
+    public Server? Server { get; set; }
     public StorageOptions StorageOptions { get; set; } = new StorageOptions();
 }
 

@@ -1,0 +1,24 @@
+﻿{
+  "$schema": "../../umbraco-package-schema.json",
+  "name": "Cultiv.Hangfire",
+  "version": "4.0.0",
+  "extensions": [
+    {
+      "type": "dashboard",
+      "alias": "Cultiv.Hangfire.Dashboard",
+      "name": "Cultiv.Hangfire",
+      "js": "/App_Plugins/Cultiv.Hangfire/dashboard.js",
+      "weight": -1,
+      "meta": {
+        "label": "Cultiv Hangfire",
+        "pathname": "cultiv-hangfire"
+      },
+      "conditions": [
+        {
+          "alias": "Umb.Condition.SectionAlias",
+          "match": "Umb.Section.Settings"
+        }
+      ]
+    }
+  ]
+}
