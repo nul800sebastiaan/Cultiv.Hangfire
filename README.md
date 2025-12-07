@@ -38,6 +38,46 @@ namespace MyNamespace
 }
 ```
 
+## Configuration
+
+### Custom Queue Names
+
+By default, Hangfire processes jobs from the `"default"` queue. For scenarios where multiple applications or sites share the same Hangfire database, you can configure specific queues for each server to process:
+
+```json
+{
+  "Hangfire": {
+    "Server": {
+      "QueueNames": ["app1", "shared", "default"]
+    }
+  }
+}
+```
+
+Each Hangfire server will only process jobs from its configured queues. Queues are processed in the order specified, so jobs in earlier queues have higher priority.
+
+To enqueue jobs to a specific queue:
+
+```csharp
+BackgroundJob.Enqueue(() => DoWork(), new EnqueuedState("app1"));
+```
+
+If no queue names are configured, the server will process the `"default"` queue.
+
+### Disable Hangfire Server
+
+If you only want to access the Hangfire dashboard without running background job processing on a particular server:
+
+```json
+{
+  "Hangfire": {
+    "Server": {
+      "Disabled": true
+    }
+  }
+}
+```
+
 In the Umbraco backoffice it will look a little something like this:
 
 ![Screenshot of Cultiv.Hangfire installed in Umbraco](https://raw.githubusercontent.com/nul800sebastiaan/Cultiv.Hangfire/main/screenshot.png)

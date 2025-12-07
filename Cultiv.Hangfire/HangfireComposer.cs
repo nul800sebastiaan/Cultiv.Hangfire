@@ -20,7 +20,11 @@ public class HangfireComposer : IComposer
         if (settings != null && settings.Server != null)
         {
             serverDisabled = settings.Server.Disabled.GetValueOrDefault(defaultValue: false);
-            queueNames = settings.Server.QueueNames ?? queueNames;
+
+            if (settings.Server.QueueNames is { Length: > 0 })
+            {
+                queueNames = settings.Server.QueueNames;
+            }
         }
 
         var provider =
