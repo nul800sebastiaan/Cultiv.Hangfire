@@ -38,6 +38,10 @@ namespace MyNamespace
 }
 ```
 
+In the Umbraco backoffice it will look a little something like this:
+
+![Screenshot of Cultiv.Hangfire installed in Umbraco](https://raw.githubusercontent.com/nul800sebastiaan/Cultiv.Hangfire/main/screenshot.png)
+
 ## Configuration
 
 ### Custom Queue Names
@@ -107,10 +111,6 @@ If you only want to access the Hangfire dashboard without running background job
   }
 }
 ```
-
-In the Umbraco backoffice it will look a little something like this:
-
-![Screenshot of Cultiv.Hangfire installed in Umbraco](https://raw.githubusercontent.com/nul800sebastiaan/Cultiv.Hangfire/main/screenshot.png)
 
 ## Notes for specific versions this package and Umbraco
 
