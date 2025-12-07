@@ -4,10 +4,42 @@
   "version": "4.0.0",
   "extensions": [
     {
+      "type": "section",
+      "alias": "Cultiv.Hangfire.Section",
+      "name": "Hangfire",
+      "weight": 100,
+      "meta": {
+        "label": "Hangfire",
+        "pathname": "hangfire"
+      },
+      "conditions": [
+        {
+          "alias": "Cultiv.Hangfire.SectionCondition"
+        }
+      ]
+    },
+    {
+      "type": "sectionView",
+      "alias": "Cultiv.Hangfire.SectionView",
+      "name": "Hangfire Dashboard",
+      "js": "/App_Plugins/Cultiv.Hangfire/dashboard-element.js",
+      "weight": 100,
+      "meta": {
+        "label": "Hangfire",
+        "pathname": "hangfire"
+      },
+      "conditions": [
+        {
+          "alias": "Umb.Condition.SectionAlias",
+          "match": "Cultiv.Hangfire.Section"
+        }
+      ]
+    },
+    {
       "type": "dashboard",
       "alias": "Cultiv.Hangfire.Dashboard",
       "name": "Cultiv.Hangfire",
-      "js": "/App_Plugins/Cultiv.Hangfire/dashboard.js",
+      "js": "/App_Plugins/Cultiv.Hangfire/dashboard-element.js",
       "weight": -1,
       "meta": {
         "label": "Cultiv Hangfire",
@@ -17,8 +49,23 @@
         {
           "alias": "Umb.Condition.SectionAlias",
           "match": "Umb.Section.Settings"
+        },
+        {
+          "alias": "Cultiv.Hangfire.DashboardCondition"
         }
       ]
+    },
+    {
+      "type": "condition",
+      "alias": "Cultiv.Hangfire.SectionCondition",
+      "name": "Hangfire Section Condition",
+      "js": "/App_Plugins/Cultiv.Hangfire/section-condition.js"
+    },
+    {
+      "type": "condition",
+      "alias": "Cultiv.Hangfire.DashboardCondition",
+      "name": "Hangfire Dashboard Condition",
+      "js": "/App_Plugins/Cultiv.Hangfire/dashboard-condition.js"
     }
   ]
 }

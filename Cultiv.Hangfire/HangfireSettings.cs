@@ -6,6 +6,7 @@ public class HangfireSettings
 {
     public Server? Server { get; set; }
     public StorageOptions StorageOptions { get; set; } = new StorageOptions();
+    public bool UseStandaloneSection { get; set; } = false;
 }
 
 public class Server

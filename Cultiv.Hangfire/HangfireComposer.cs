@@ -6,6 +6,7 @@ using Hangfire.States;
 using Hangfire.Storage.SQLite;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 
 namespace Cultiv.Hangfire;
@@ -14,6 +15,9 @@ public class HangfireComposer : IComposer
 {
     public void Compose(IUmbracoBuilder builder)
     {
+        // Configure Hangfire settings
+        builder.Services.Configure<HangfireSettings>(builder.Config.GetSection("Hangfire"));
+
         var serverDisabled = false;
         string[] queueNames = [EnqueuedState.DefaultQueue];
         var settings = builder.Config.GetSection("Hangfire").Get<HangfireSettings>();
