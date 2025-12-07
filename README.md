@@ -112,6 +112,25 @@ If you only want to access the Hangfire dashboard without running background job
 }
 ```
 
+### Standalone Section Mode
+
+By default, the Hangfire dashboard appears as a dashboard within Umbraco's Settings section. You can optionally configure it as a standalone section with its own top-level menu item and separate permissions:
+
+```json
+{
+  "Hangfire": {
+    "UseStandaloneSection": true
+  }
+}
+```
+
+**Key differences:**
+
+- **Dashboard mode (default)**: Dashboard appears in Settings section, inherits Settings section permissions
+- **Standalone section mode**: Full-width view (no tree sidebar), separate "Hangfire" section in User Groups with granular permission control
+
+When enabled, administrators can grant users access to the Hangfire section independently from other sections by editing User Group permissions.
+
 ## Notes for specific versions this package and Umbraco
 
 - Version 5+ of this package works with Umbraco versions 17 and above
