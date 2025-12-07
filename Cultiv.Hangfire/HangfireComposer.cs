@@ -46,16 +46,19 @@ public class HangfireComposer : IComposer
             }
             else
             {
-                UseSqlServerStorage(builder, connectionString, serverDisabled, queueNames);
+                UseSqlServerStorage(builder, connectionString, serverDisabled, queueNames, settings);
             }
         }
     }
 
-    private static void UseSqlServerStorage(IUmbracoBuilder builder, string connectionString, bool serverDisabled, string[] queueNames)
+    private static void UseSqlServerStorage(IUmbracoBuilder builder, string connectionString, bool serverDisabled, string[] queueNames, HangfireSettings settings)
     {
         // Explicitly use the SqlConnection in the Microsoft.Data namespace to support extended connection string parameters such as "authentication"
         // https://github.com/HangfireIO/Hangfire/issues/1827
         SqlConnection ConnectionFactory() => new(connectionString);
+
+        // Use provided settings or create defaults
+        var storageOptions = settings?.StorageOptions ?? new StorageOptions();
 
         // Configure Hangfire to use our current database and add the option to write console messages
         builder.Services.AddHangfire(configuration =>
@@ -72,13 +75,13 @@ public class HangfireComposer : IComposer
                 .UseConsole()
                 .UseSqlServerStorage((Func<SqlConnection>)ConnectionFactory, new SqlServerStorageOptions
                 {
-                    PrepareSchemaIfNecessary = true,
-                    EnableHeavyMigrations = true,
-                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-                    QueuePollInterval = TimeSpan.Zero,
-                    UseRecommendedIsolationLevel = true,
-                    DisableGlobalLocks = true
+                    PrepareSchemaIfNecessary = storageOptions.PrepareSchemaIfNecessary,
+                    EnableHeavyMigrations = storageOptions.EnableHeavyMigrations,
+                    CommandBatchMaxTimeout = storageOptions.CommandBatchMaxTimeout,
+                    SlidingInvisibilityTimeout = storageOptions.SlidingInvisibilityTimeout,
+                    QueuePollInterval = storageOptions.QueuePollInterval,
+                    UseRecommendedIsolationLevel = storageOptions.UseRecommendedIsolationLevel,
+                    DisableGlobalLocks = storageOptions.DisableGlobalLocks
                 });
         });
 

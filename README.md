@@ -64,6 +64,36 @@ BackgroundJob.Enqueue(() => DoWork(), new EnqueuedState("app1"));
 
 If no queue names are configured, the server will process the `"default"` queue.
 
+### SQL Server Storage Options
+
+Configure Hangfire's SQL Server storage behavior to optimize performance and reduce database load:
+
+```json
+{
+  "Hangfire": {
+    "StorageOptions": {
+      "QueuePollInterval": "00:00:15",
+      "PrepareSchemaIfNecessary": true,
+      "EnableHeavyMigrations": true,
+      "CommandBatchMaxTimeout": "00:05:00",
+      "SlidingInvisibilityTimeout": "00:05:00",
+      "UseRecommendedIsolationLevel": true,
+      "DisableGlobalLocks": true
+    }
+  }
+}
+```
+
+**Configuration options:**
+
+- **QueuePollInterval**: Controls how often Hangfire polls the database for new jobs. Default is `00:00:00` (immediate polling). Setting to `00:00:15` (15 seconds) significantly reduces database load in high-traffic scenarios while maintaining reasonable job pickup times.
+- **PrepareSchemaIfNecessary**: Automatically creates database schema if needed (default: `true`)
+- **EnableHeavyMigrations**: Allows Hangfire to perform database migrations (default: `true`)
+- **CommandBatchMaxTimeout**: Maximum timeout for batch commands (default: 5 minutes)
+- **SlidingInvisibilityTimeout**: Time before a processing job is considered abandoned (default: 5 minutes)
+- **UseRecommendedIsolationLevel**: Uses recommended SQL isolation level (default: `true`)
+- **DisableGlobalLocks**: Disables global locks for better performance (default: `true`)
+
 ### Disable Hangfire Server
 
 If you only want to access the Hangfire dashboard without running background job processing on a particular server:
@@ -81,3 +111,14 @@ If you only want to access the Hangfire dashboard without running background job
 In the Umbraco backoffice it will look a little something like this:
 
 ![Screenshot of Cultiv.Hangfire installed in Umbraco](https://raw.githubusercontent.com/nul800sebastiaan/Cultiv.Hangfire/main/screenshot.png)
+
+## Notes for specific versions this package and Umbraco
+
+- Version 5+ of this package works with Umbraco versions 17 and above
+- Version 4+ of this package works with Umbraco versions 14 through 16
+- Version 3 and below works with Umbraco 9 through 13
+
+### Umbraco 13
+
+- You might need to add the following above your `IComposer`s that schedule the jobs: `[ComposeAfter(typeof(HangfireComposer))]` ([see this issue](https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/3#issuecomment-2823912302))
+ 
