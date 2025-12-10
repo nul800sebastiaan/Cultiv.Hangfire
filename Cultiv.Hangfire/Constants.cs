@@ -5,7 +5,7 @@
         public static class CultivHangfire
         {
             public const string HangfireDashboard = nameof(HangfireDashboard);
-            public const string Endpoint = "/umbraco/hangfire";
+            public const string Endpoint = "/cultiv/hangfire";
             public const string AlternativeConnectionStringName = "hangfireDB";
             
             public const string CookiesScheme = "Cultiv.Hangfire.CookieScheme";
