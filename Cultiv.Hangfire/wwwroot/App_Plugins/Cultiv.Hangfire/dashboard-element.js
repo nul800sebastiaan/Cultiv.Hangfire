@@ -13,7 +13,7 @@ template.innerHTML = `
             </style>
 
             <uui-box class="hangfire-wrapper">                
-                <iframe name="hangfireIframe" class="hangfire-content" id="Hangfire" src="/umbraco/hangfire/"></iframe>
+                <iframe name="hangfireIframe" class="hangfire-content" id="Hangfire" src="/cultiv/hangfire/"></iframe>
             </uui-box>
 `;
 
