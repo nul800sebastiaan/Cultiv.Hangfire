@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Cultiv.Hangfire;
+﻿namespace Cultiv.Hangfire;
 
 public class HangfireSettings
 {

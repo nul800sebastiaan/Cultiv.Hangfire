@@ -8,6 +8,8 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Extensions;
 
 namespace Cultiv.Hangfire;
 
@@ -55,7 +57,7 @@ public class HangfireComposer : IComposer
         }
     }
 
-    private static void UseSqlServerStorage(IUmbracoBuilder builder, string connectionString, bool serverDisabled, string[] queueNames, HangfireSettings settings)
+    private static void UseSqlServerStorage(IUmbracoBuilder builder, string connectionString, bool serverDisabled, string[] queueNames, HangfireSettings? settings)
     {
         // Explicitly use the SqlConnection in the Microsoft.Data namespace to support extended connection string parameters such as "authentication"
         // https://github.com/HangfireIO/Hangfire/issues/1827
