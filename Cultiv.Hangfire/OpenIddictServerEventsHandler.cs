@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using OpenIddict.Server;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Security;
+using Umbraco.Extensions;
 
 namespace Cultiv.Hangfire;
 

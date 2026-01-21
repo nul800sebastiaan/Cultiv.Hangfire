@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
@@ -24,8 +24,7 @@
 
     <ItemGroup>
 		<!-- Next lines specifies that you need at least v17.0.0 installed to be able to install this package -->
-		<PackageReference Include="Umbraco.Cms" Version="[17.0.0, 18.0.0)" />
-		<PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="[17.0.0, 18.0.0)" />
+		<PackageReference Include="Umbraco.Cms.Api.Management" Version="[17.0.0, 18.0.0)" />
 		<PackageReference Include="Umbraco.Cms.Persistence.SqlServer" Version="[17.0.0, 18.0.0)" />
 		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[17.0.0, 18.0.0)" />
         <PackageReference Include="Hangfire" Version="1.8.22" />
