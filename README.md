@@ -20,7 +20,7 @@ namespace MyNamespace
     {
         public void Compose(IUmbracoBuilder builder)
         {            
-            RecurringJob.AddOrUpdate(() => DoIt(null), Cron.Hourly());
+            RecurringJob.AddOrUpdate("do-it-id", () => DoIt(null), Cron.Hourly());
         }
         
         public void DoIt(PerformContext context)
