@@ -23,11 +23,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- Next lines specifies that you need at least v14 beta1 installed to be able to install this package --> 
-        <PackageReference Include="Umbraco.Cms" Version="17.0.0" />
-        <PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="17.0.0" />
-        <PackageReference Include="Umbraco.Cms.Persistence.SqlServer" Version="17.0.0" />
-        <PackageReference Include="Umbraco.Cms.Web.Website" Version="17.0.0" />
+		<!-- Next lines specifies that you need at least v17.0.0 installed to be able to install this package -->
+		<PackageReference Include="Umbraco.Cms" Version="[17.0.0, 18.0.0)" />
+		<PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="[17.0.0, 18.0.0)" />
+		<PackageReference Include="Umbraco.Cms.Persistence.SqlServer" Version="[17.0.0, 18.0.0)" />
+		<PackageReference Include="Umbraco.Cms.Web.Website" Version="[17.0.0, 18.0.0)" />
         <PackageReference Include="Hangfire" Version="1.8.22" />
         <PackageReference Include="Hangfire.Console" Version="1.4.3" />
         <PackageReference Include="Hangfire.Storage.SQLite" Version="0.4.2" />
