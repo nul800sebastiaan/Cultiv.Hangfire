@@ -101,10 +101,10 @@ public class HangfireComposer : IComposer
 
     private static void UseSqliteStorage(IUmbracoBuilder builder, bool serverDisabled, string[] queueNames)
     {
-        // Store the db in App_Data to prevent dotnet watch from triggering a reload loop
+        // Store the db in umbraco/Data to prevent dotnet watch from triggering a reload loop
         // on the SQLite WAL file: https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/47
-        const string dbPath = "App_Data/Hangfire.db";
-        Directory.CreateDirectory("App_Data");
+        const string dbPath = "umbraco/Data/Hangfire.db";
+        Directory.CreateDirectory("umbraco/Data");
 
         GlobalConfiguration.Configuration.UseSQLiteStorage(dbPath);
 
