@@ -101,7 +101,12 @@ public class HangfireComposer : IComposer
 
     private static void UseSqliteStorage(IUmbracoBuilder builder, bool serverDisabled, string[] queueNames)
     {
-        GlobalConfiguration.Configuration.UseSQLiteStorage();
+        // Store the db in App_Data to prevent dotnet watch from triggering a reload loop
+        // on the SQLite WAL file: https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/47
+        const string dbPath = "App_Data/Hangfire.db";
+        Directory.CreateDirectory("App_Data");
+
+        GlobalConfiguration.Configuration.UseSQLiteStorage(dbPath);
 
         builder.Services.AddHangfire(configuration =>
         {
@@ -122,6 +127,6 @@ public class HangfireComposer : IComposer
         // Explicitly set the storage parameters - needed if there if this is the first time Hangfire
         // gets initialized and there is already code to schedule jobs
         // Prevents: https://discuss.hangfire.io/t/jobstorage-current-property-value-has-not-been-initialized/884
-        JobStorage.Current = new SQLiteStorage("Hangfire.db", new SQLiteStorageOptions());
+        JobStorage.Current = new SQLiteStorage(dbPath, new SQLiteStorageOptions());
     }
 }
