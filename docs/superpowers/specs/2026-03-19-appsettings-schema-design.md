@@ -40,24 +40,24 @@ Hangfire
 
 `TimeSpan` properties are represented as `string` with a description noting the `HH:mm:ss` format, matching how .NET configuration binds `TimeSpan` values from JSON.
 
-### 2. `build/Cultiv.Hangfire.targets`
+### 2. `buildTransitive/Cultiv.Hangfire.targets`
 
 MSBuild targets file that appends the schema file to `UmbracoJsonSchemaFiles`:
 
 ```xml
 <Project>
   <ItemGroup>
-    <UmbracoJsonSchemaFiles Include="$(MSBuildThisFileDirectory)..\appsettings-schema.Cultiv.Hangfire.json" />
+    <UmbracoJsonSchemaFiles Include="$(MSBuildThisFileDirectory)..\appsettings-schema.Cultiv.Hangfire.json" Weight="-10" />
   </ItemGroup>
 </Project>
 ```
 
-The `build/` folder is the conventional NuGet location for `.targets` files that auto-import into consuming projects.
+`buildTransitive/` is the correct NuGet folder — unlike `build/`, it propagates the import transitively through the dependency graph, which is required for Umbraco's schema machinery to work in consuming apps. The `Weight="-10"` attribute controls ordering in `appsettings-schema.json`; a negative value places the package's schema after Umbraco CMS entries, which is conventional for third-party packages.
 
 ### 3. `Cultiv.Hangfire.csproj` updates
 
-- Pack `appsettings-schema.Cultiv.Hangfire.json` into the NuGet package root (`PackagePath=""`)
-- Pack `build/Cultiv.Hangfire.targets` into `build/` in the NuGet package (`PackagePath="build/"`)
+- Pack `appsettings-schema.Cultiv.Hangfire.json` as a `None` item into the NuGet package root (`PackagePath=""`)
+- Pack `buildTransitive/Cultiv.Hangfire.targets` into `buildTransitive/` in the NuGet package (`PackagePath="buildTransitive/"`)
 
 ## Testing
 
