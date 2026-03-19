@@ -106,6 +106,12 @@ public class HangfireComposer : IComposer
         const string dbPath = "umbraco/Data/Hangfire.db";
         Directory.CreateDirectory("umbraco/Data");
 
+        // Migrate from the old root location if it exists
+        if (File.Exists("Hangfire.db"))
+        {
+            File.Move("Hangfire.db", dbPath, overwrite: false);
+        }
+
         GlobalConfiguration.Configuration.UseSQLiteStorage(dbPath);
 
         builder.Services.AddHangfire(configuration =>
