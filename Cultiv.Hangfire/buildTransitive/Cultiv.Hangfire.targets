@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup>
+    <UmbracoJsonSchemaFiles Include="$(MSBuildThisFileDirectory)..\appsettings-schema.Cultiv.Hangfire.json" Weight="-10" />
+  </ItemGroup>
+</Project>
