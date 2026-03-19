@@ -36,5 +36,7 @@
         <None Include="../README.md" Pack="true" PackagePath="" />
         <None Include="../LICENSE" Pack="true" PackagePath="" />
         <None Include="../logo.png" Pack="true" PackagePath="" />
+        <None Include="appsettings-schema.Cultiv.Hangfire.json" Pack="true" PackagePath="" />
+        <None Include="buildTransitive/Cultiv.Hangfire.targets" Pack="true" PackagePath="buildTransitive/" />
     </ItemGroup>	
 </Project>
