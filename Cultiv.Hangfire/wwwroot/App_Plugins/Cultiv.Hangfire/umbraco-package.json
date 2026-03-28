@@ -42,7 +42,7 @@
       "js": "/App_Plugins/Cultiv.Hangfire/dashboard-element.js",
       "weight": -1,
       "meta": {
-        "label": "Cultiv Hangfire",
+        "label": "Hangfire",
         "pathname": "cultiv-hangfire"
       },
       "conditions": [
