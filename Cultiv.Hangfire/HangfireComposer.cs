@@ -106,8 +106,10 @@ public class HangfireComposer : IComposer
         const string dbPath = "umbraco/Data/Hangfire.db";
         Directory.CreateDirectory("umbraco/Data");
 
-        // Migrate from the old root location if it exists
-        if (File.Exists("Hangfire.db"))
+        // Migrate from the old root location, but only if there isn't already a
+        // database in the new location - otherwise the new location wins and we
+        // leave the stale root file alone: https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/58
+        if (File.Exists("Hangfire.db") && File.Exists(dbPath) == false)
         {
             File.Move("Hangfire.db", dbPath, overwrite: false);
         }
