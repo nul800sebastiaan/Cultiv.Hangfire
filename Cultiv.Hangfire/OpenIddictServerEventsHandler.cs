@@ -1,10 +1,12 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using OpenIddict.Server;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Security;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Extensions;
 
 namespace Cultiv.Hangfire;
@@ -45,13 +47,11 @@ public class OpenIddictServerEventsHandler :
         }
         
         // only proceed if user has access to the Settings section
-        if (!context.Principal.HasClaim(c => 
-                c.Issuer == Umbraco.Cms.Core.Constants.Security.BackOfficeAuthenticationType
-                && c.Value == Umbraco.Cms.Core.Constants.Applications.Settings))
+        if (!await HasSettingsAccessAsync(context.Principal))
         {
             return;
         }
-        
+
         // create a new principal with the claims from the authenticated principal 
         var principal = new ClaimsPrincipal(
             new ClaimsIdentity(
@@ -64,6 +64,40 @@ public class OpenIddictServerEventsHandler :
         await _httpContextAccessor
             .GetRequiredHttpContext()
             .SignInAsync(Constants.CultivHangfire.CookiesScheme, principal, GetAuthenticationProperties());
+    }
+
+    // determine whether the signed-in back-office user has access to the Settings section
+    private async Task<bool> HasSettingsAccessAsync(ClaimsPrincipal principal)
+    {
+        // Umbraco < 18 exposed the user's allowed sections as claims on the back-office
+        // identity (issuer == BackOfficeAuthenticationType, value == section alias), so
+        // honour those directly when present.
+        if (principal.HasClaim(c =>
+                c.Issuer == Umbraco.Cms.Core.Constants.Security.BackOfficeAuthenticationType
+                && c.Value == Umbraco.Cms.Core.Constants.Applications.Settings))
+        {
+            return true;
+        }
+
+        // Umbraco 18 stopped adding allowed-application claims to the token, so fall back
+        // to resolving the user's allowed sections from the user service.
+        var userService = _httpContextAccessor
+            .GetRequiredHttpContext()
+            .RequestServices
+            .GetService<IUserService>();
+        if (userService is null)
+        {
+            return false;
+        }
+
+        var subject = principal.FindFirstValue(Umbraco.Cms.Core.Constants.Security.OpenIdDictSubClaimType);
+        if (!Guid.TryParse(subject, out var userKey))
+        {
+            return false;
+        }
+
+        var user = await userService.GetAsync(userKey);
+        return user?.AllowedSections.Contains(Umbraco.Cms.Core.Constants.Applications.Settings) == true;
     }
 
     // event handler for when access tokens are revoked
