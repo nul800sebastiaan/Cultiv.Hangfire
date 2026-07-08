@@ -35,25 +35,22 @@ public class HangfireComposer : IComposer
 
         var provider =
             builder.Config.GetConnectionStringProviderName(Umbraco.Cms.Core.Constants.System.UmbracoConnectionName);
+        var connectionString = builder.GetConnectionString();
 
-        if (provider.InvariantEquals("Microsoft.Data.SQLite"))
+        // Use SQLite when it's explicitly configured, when there's no connection string yet
+        // (the package was installed before Umbraco was set up - issue #11), or when the
+        // connection string points at a SQLite database. That last case covers local Umbraco
+        // Cloud sites where Deploy restores to SQLite but leaves the provider name unset:
+        // https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/44
+        if (provider.InvariantEquals("Microsoft.Data.Sqlite")
+            || string.IsNullOrEmpty(connectionString)
+            || connectionString.Contains(".sqlite.db", StringComparison.OrdinalIgnoreCase))
         {
             UseSqliteStorage(builder, serverDisabled, queueNames);
         }
         else
         {
-            var connectionString = builder.GetConnectionString();
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                // This might happen when the package is installed before Umbraco is installed
-                // https://github.com/nul800sebastiaan/Cultiv.Hangfire/issues/11
-                // also happens on Umbraco Cloud sites that have been cloned locally - use SQLite instead
-                UseSqliteStorage(builder, serverDisabled, queueNames);
-            }
-            else
-            {
-                UseSqlServerStorage(builder, connectionString, serverDisabled, queueNames, settings);
-            }
+            UseSqlServerStorage(builder, connectionString, serverDisabled, queueNames, settings);
         }
     }
 
