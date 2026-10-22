@@ -68,7 +68,6 @@ public class HangfireComposer : IComposer
         {
             configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-                .UseColouredConsoleLogProvider()
                 .UseDashboardMetric(SqlServerStorage.ActiveConnections)
                 .UseDashboardMetric(SqlServerStorage.TotalConnections)
                 .UseDashboardMetric(DashboardMetrics.AwaitingCount)
@@ -117,7 +116,6 @@ public class HangfireComposer : IComposer
         {
             configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-                .UseColouredConsoleLogProvider()
                 .UseDashboardMetric(SqlServerStorage.ActiveConnections)
                 .UseDashboardMetric(SqlServerStorage.TotalConnections)
                 .UseDashboardMetric(DashboardMetrics.AwaitingCount)
